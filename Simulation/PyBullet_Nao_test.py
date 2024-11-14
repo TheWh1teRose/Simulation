@@ -3,11 +3,10 @@ import time
 import matplotlib.pyplot as plt
 
 p.connect(p.GUI)
-p.loadURDF("Simulation/Models/Plane/plane.urdf")
 p.configureDebugVisualizer(p.COV_ENABLE_RENDERING,0)
 
 
-startPos = [0,0,1]
+startPos = [0,0,0.3]
 startOrientation = p.getQuaternionFromEuler([0, 0, 0])
 
 
@@ -59,30 +58,57 @@ timeStep=1./240.
 p.setTimeStep(timeStep)
 target = 0
 
+# Define the vector offset from the tibia link origin to the desired tracking point
+# Adjust these values based on your needs
+tracking_point_offset = [0.1, 0, 0]  # Example offset in meters
+
 tibia_positions_x = []
 tibia_positions_y = []
+tracking_point_positions_x = []
+tracking_point_positions_y = []
 
 while (target<20):
-	# Get tibia position and orientation
-	tibia_state = p.getLinkState(nao, left_tibia_id)
-	tibia_position = tibia_state[0]  # World position coordinates (x, y, z)
-	tibia_orientation = tibia_state[1]  # World orientation (quaternion)
-	
-	print(f"Left Tibia Position: {tibia_position}")
-	tibia_positions_x.append(tibia_position[0])
-	tibia_positions_y.append(tibia_position[1])
-	
-	p.setJointMotorControl2(nao, left_tibia_id, p.VELOCITY_CONTROL, targetVelocity=0.1, force=50)
+    # Get tibia position and orientation
+    tibia_state = p.getLinkState(nao, left_tibia_id)
+    tibia_position = list(tibia_state[0])
+    tibia_orientation = tibia_state[1]
+    
+    # Calculate the tracking point position in world coordinates
+    # This uses the rotation matrix to properly transform the offset vector
+    tracking_point_world = p.multiplyTransforms(
+        tibia_position,      # Position of tibia
+        tibia_orientation,   # Orientation of tibia
+        tracking_point_offset,  # Offset vector in local coordinates
+        [0, 0, 0, 1]        # No additional rotation for the offset
+    )[0]  # [0] gets the position, [1] would get the orientation
+    
+    print(f"Left Tibia Position: {tibia_position}")
+    print(f"Tracking Point Position: {tracking_point_world}")
+    
+    tibia_positions_x.append(tibia_position[0])
+    tibia_positions_y.append(tibia_position[1])
+    tracking_point_positions_x.append(tracking_point_world[0])
+    tracking_point_positions_y.append(tracking_point_world[1])
 
-	p.stepSimulation()
-	target+=timeStep
-	
-	time.sleep(timeStep)
-     
+    # Visualize both points
+    p.addUserDebugPoints([tibia_position], [[1, 0, 0]])  # Red for tibia
+    p.addUserDebugPoints([tracking_point_world], [[0, 1, 0]])  # Green for tracking point
+    
+    tibia_position[1] -= 0.05
+    
+    p.addUserDebugPoints([tibia_position], [tibia_position])
+    p.setJointMotorControl2(nao, left_tibia_id, p.VELOCITY_CONTROL, targetVelocity=0.1, force=50)
+    p.stepSimulation()
+    
+    target+=timeStep
+    time.sleep(timeStep)
 
-plt.plot(tibia_positions_x, tibia_positions_y)
+# Plot both trajectories
+plt.plot(tibia_positions_x, tibia_positions_y, 'r-', label='Tibia Origin')
+plt.plot(tracking_point_positions_x, tracking_point_positions_y, 'g-', label='Tracking Point')
+plt.legend()
 plt.show()
 
-# Save the plot to a file (in case showing doesn't work)
+# Save the plot with both trajectories
 plt.savefig('trajectory_plot.png')
 
