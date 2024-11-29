@@ -97,7 +97,7 @@ while (target<20):
     tibia_position[1] -= 0.05
     
     p.addUserDebugPoints([tibia_position], [tibia_position])
-    p.setJointMotorControl2(nao, left_tibia_id, p.VELOCITY_CONTROL, targetVelocity=0.1, force=50)
+    p.setJointMotorControl2(nao, left_tibia_id, p.VELOCITY_CONTROL, targetVelocity=0.3, force=50)
     p.stepSimulation()
     
     target+=timeStep
