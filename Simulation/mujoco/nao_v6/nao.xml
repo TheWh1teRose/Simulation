@@ -141,6 +141,8 @@
                         <joint name="LHipPitch" axis="0 1 0" range="-88 27.73" limited="true" />
 
                         <body name="LTibia" pos="0 0 -0.1">
+                            <site name="tracking_site" pos="0 0.03 -0.056" size="0.01" rgba="1 0 0 1"/>
+
                             <geom type="mesh" material="NaoMat_MainSkin" mesh="naoLKneePitchV6_0" />
                             <geom type="mesh" material="NaoMat_SecondarySkin_pantone445C" mesh="naoLKneePitchV6_1" />
                             <geom type="mesh" material="NaoMat_Structure" mesh="naoLKneePitchV6_2" />
