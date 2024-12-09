@@ -134,6 +134,7 @@
                     <joint name="LHipRoll" axis="1 0 0" range="-21.74 45.29" limited="true" />
 
                     <body name="LThigh" pos="0 0 0">
+                        <site name="tracking_thigh" pos="0 0.05 -0.04" size="0.005" rgba="1 0 0 1"/>
                         <geom type="mesh" material="NaoMat_Structure" mesh="naoLHipPitch_0" />
                         <geom type="mesh" material="NaoMat_MainSkin" mesh="naoLHipPitch_1" />
 
@@ -141,7 +142,7 @@
                         <joint name="LHipPitch" axis="0 1 0" range="-88 27.73" limited="true" />
 
                         <body name="LTibia" pos="0 0 -0.1">
-                            <site name="tracking_site" pos="-0.002 0.05 -0.06" size="0.005" rgba="1 0 0 1"/>
+                            <site name="tracking_tibia" pos="-0.002 0.05 -0.06" size="0.005" rgba="1 0 0 1"/>
 
                             <geom type="mesh" material="NaoMat_MainSkin" mesh="naoLKneePitchV6_0" />
                             <geom type="mesh" material="NaoMat_SecondarySkin_pantone445C" mesh="naoLKneePitchV6_1" />
